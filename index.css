@@ -1,0 +1,408 @@
+body {
+  font: 14px "Century Gothic", Futura, sans-serif;
+  margin: 20px;
+}
+
+ol,
+ul {
+  padding-left: 30px;
+  list-style: none;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.status {
+  margin-bottom: 10px;
+}
+
+.square {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  background: #ddd;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-info {
+  margin-left: 20px;
+}
+
+.select-service {
+  display: grid;
+  width: 90%;
+  max-width: 1080px;
+  grid-template-columns: 100%;
+  grid-auto-flow: row;
+  grid-template-rows: auto /*repeat(2, 20%) 60%*/;
+  /*
+  border: 1px solid red;
+  */
+}
+
+.progress-bar {
+  display: grid;
+  width: 95%;
+  height: 50px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 100%;
+  gap: 5px;
+
+  /*
+  border: 1px solid blue;
+  */
+}
+
+.progress-bar li {
+  cursor: pointer;
+  text-align: center;
+  align-self: center;
+  padding: 20px;
+  letter-spacing: 1px;
+  font-weight: bold;
+  /*
+  border: 1px solid red;
+  */
+}
+
+.bar-gray {
+  background-color: rgb(212, 212, 212);
+  color: #999;
+}
+
+.bar-active {
+  background-color: #ffcc33;
+  color: #000;
+}
+
+.select-service h1 {
+  text-align: center;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.service-section {
+  display: grid;
+  width: 100%;
+  max-width: 1000px;
+  grid-auto-flow: column;
+  grid-template-columns: 250px repeat(1, 1fr);
+  gap: 40px;
+}
+
+.zip-form {
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 12px #888888;
+  /*
+  border: 1px solid red;
+  */
+}
+
+.zip-form h3 {
+  text-align: center;
+  color: #999;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.zip-form h1 {
+  text-align: center;
+  color: #000;
+  font-size: 32px;
+  font-weight: bolder;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.zip-form p {
+  text-align: center;
+  color: #999;
+  font-size: 16px;
+  margin-top: 30px;
+  margin-bottom: 60px;
+}
+
+.btn-exit {
+  cursor: pointer;
+  float: right;
+  height: 25px;
+  width: 25px;
+  background-color: #000;
+  border: none;
+  border-radius: 2.5px;
+  margin-top: 10px;
+  margin-right: 10px;
+
+  color: #fff;
+  font-size: 20px;
+  text-align: center;
+}
+
+.zip-form-container {
+  width: 500px;
+  margin: 0 auto;
+  /*
+  border: 1px solid blue;
+  */
+}
+
+.zip-form-container input {
+  height: 50px;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid black;
+
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.btn-continue {
+  cursor: pointer;
+  height: 50px;
+  width: 150px;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.btn-active {
+  background-color: #ffcc33;
+  color: #000;
+}
+
+.btn-gray {
+  background-color: rgb(189, 186, 186);
+  color: #fff;
+}
+
+.change-zip {
+  display: grid;
+  grid-template-rows: 60px 60px;
+  align-items: center;
+  width: 90%;
+  height: 120px;
+  margin-right: 20px;
+  border-radius: 10px;
+  background-color: #f2f2f2;
+}
+
+.change-zip p {
+  text-align: center;
+}
+
+#zip-sec {
+  padding: 20px;
+}
+
+.material-icons {
+  font-size: 32px;
+  margin-top: 10px;
+  color: #52b140;
+}
+
+#span-1 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #444;
+}
+
+#span-2 {
+  font-size: 16px;
+  font-weight: bolder;
+  letter-spacing: 0.7px;
+  color: #444;
+}
+
+#span-3 {
+  cursor: pointer;
+  color: #000;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-decoration: underline;
+}
+
+#zip-sec-2 {
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  padding: 20px;
+  background-color: #d8d8d8;
+}
+
+.service-option {
+  margin-bottom: 5px;
+  background-color: #f2f2f2;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+.service-option table {
+  width: 100%;
+  min-width: 800px;
+  padding: 15px;
+}
+
+th,
+td {
+  border-right: 1px solid #d8d8d8;
+  border-bottom: 1px solid #d8d8d8;
+}
+
+.service-option thead th {
+  padding: 20px;
+  width: 80px;
+  color: #fff;
+  letter-spacing: 0.5px;
+  /*
+  border: 1px solid blue;
+  */
+}
+
+.service-option thead tr {
+  background-color: #444;
+  /*
+  border: 1px solid blue;
+  */
+}
+
+.service-option tbody th {
+  text-align: left;
+  padding: 20px;
+}
+
+.service-option tbody td {
+  padding: 20px;
+  text-align: center;
+  /*
+  border: 1px solid blue;
+  */
+}
+
+.service-head {
+  width: 100%;
+}
+
+.service-head h3 {
+  letter-spacing: 0.5px;
+  font-size: 16px;
+}
+
+.togg-icon {
+  cursor: pointer;
+  text-align: center;
+  float: right;
+  width: 50px;
+  background-color: #ffcc33;
+  color: #000;
+  font-size: 24px;
+  font-weight: bolder;
+  border-radius: 5px;
+  /*
+  padding: 5px;
+  
+  border: 1px solid blue;
+  */
+}
+
+.togg-icon:hover {
+  background-color: #fff;
+  border: 2px solid #ffcc33;
+  color: #000;
+}
+
+.service-head h3 {
+  line-height: 40px;
+  padding: 20px;
+  letter-spacing: 0.2px;
+  /*
+  border: 1px solid green;
+  */
+}
+
+.float-right {
+  cursor: pointer;
+  float: right;
+  width: 200px;
+  height: 60px;
+  margin-right: 50px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  color: #000;
+  font-weight: bolder;
+  border: none;
+}
+
+.float-left {
+  cursor: pointer;
+  float: left;
+  width: 200px;
+  height: 60px;
+  margin-right: 50px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  color: #000;
+  font-weight: bolder;
+  border: none;
+}
+
+.input-control {
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  border: none;
+  text-align: center;
+  font-size: 18px;
+}
+
+.btn-minus,
+.btn-plus {
+  cursor: pointer;
+  padding: 10px;
+  margin: 5px;
+  font-weight: bolder;
+  font-size: 18px;
+  border-radius: 5px;
+  border: 1px solid #c2c2c2;
+}
