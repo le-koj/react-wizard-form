@@ -108,7 +108,14 @@ function Step1(props) {
       <Service
         currentStep={props.currentStep}
         zipcode={props.zipcode}
+        carpet={props.carpet}
+        areaRug={props.areaRug}
+        upholstery={props.upholstery}
+        airDuct={props.airDuct}
+        tileGrout={props.tileGrout}
         recall={props.recall}
+        update={props.update}
+        handleChangeCheck={props.handleChangeCheck}
         newZip={props.newZip}
       />
     </div>
@@ -125,18 +132,7 @@ function Step2(props) {
   return (
     <React.Fragment>
       <ProgressBar currentStep={props.currentStep} recall={props.recall} />
-      <div className="form-group">
-        <label htmlFor="email">Username</label>
-        <input
-          type="text"
-          className="form-control"
-          id="username"
-          name="username"
-          placeholder="Enter username"
-          value={props.username}
-          onChange={props.handleChange}
-        />
-      </div>
+      <CalenderApp />
     </React.Fragment>
   );
 } // Step2
@@ -176,10 +172,78 @@ class MasterForm extends React.Component {
       username: "",
       password: "",
       zipcode: "",
+
+      // SERVICES
+      carpet: {
+        title: "CARPET CLEANING",
+        rooms: {
+          clean: 0,
+          protect: 0,
+          deodorize: 0,
+        }, // rooms
+        bath: {
+          clean: 0,
+          protect: 0,
+          deodorize: 0,
+        }, // bath
+        hall: {
+          clean: 0,
+          protect: 0,
+          deodorize: 0,
+        }, // hall
+        staircase: {
+          clean: 0,
+          protect: 0,
+          deodorize: 0,
+        }, // staircase
+        display: false, // boolean to display options
+        toggleIcon: this.downArrow, // toggle icon
+      },
+
+      areaRug: {
+        title: "AREA RUG CLEANING",
+        length: 0,
+        width: 0,
+        clean: 0,
+        protect: 0,
+        deodorize: 0,
+        display: false, // boolean to display options
+        toggleIcon: this.downArrow, // toggle icon
+      },
+
+      upholstery: {
+        title: "UPHOLSTERY CLEANING",
+        sofa: { clean: 0, protect: 0, deodorize: 0 }, // rooms
+        loveseat: { clean: 0, protect: 0, deodorize: 0 }, // bath
+        chair: { clean: 0, protect: 0, deodorize: 0 }, // hall
+        ottoman: { clean: 0, protect: 0, deodorize: 0 }, // staircase
+        diningChair: { clean: 0, protect: 0, deodorize: 0 }, // staircase
+        display: false, // boolean to display options
+        toggleIcon: this.downArrow, // toggle icon
+      }, // upholstery
+
+      airDuct: {
+        title: "AIR DUCT CLEANING",
+        hvac: 0,
+        centralAC: false,
+        cleanDryerVent: false,
+        display: false, // boolean to display options
+        toggleIcon: this.downArrow, // toggle icon
+      }, // upholstery
+
+      tileGrout: {
+        title: "TILE & GROUT FLOOR CLEANING",
+        rooms: { tileClean: 0, colorSeal: 0 },
+        staircase: { tileClean: 0, colorSeal: 0 },
+        display: false, // boolean to display options
+        toggleIcon: this.downArrow, // toggle icon
+      }, // tile & grout floor
     };
 
     // Bind the submission to handleChange()
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeCheck = this.handleChangeCheck.bind(this);
+    this.update = this.update.bind(this);
 
     // Bind functions for next and previous
     this._next = this._next.bind(this);
@@ -192,6 +256,9 @@ class MasterForm extends React.Component {
     this.recall = this.recall.bind(this);
     this.newZip = this.newZip.bind(this);
   } // constructor
+
+  upArrow = "&#x2191;";
+  downArrow = "&#x2193;";
 
   _continue() {
     let currentStep = this.state.currentStep;
@@ -332,6 +399,14 @@ class MasterForm extends React.Component {
     });
   } // handleChange
 
+  handleChangeCheck(event, state) {
+    let group = event.currentTarget.getAttribute("group");
+    console.log(group);
+    let newState = state;
+    newState[group] = newState[group] === false ? true : false;
+    this.setState({ newState });
+  } // handleChangeCHeck
+
   // Trigger an alert on form submission
   handleSubmit = (event) => {
     event.preventDefault();
@@ -341,6 +416,11 @@ class MasterForm extends React.Component {
           Username: ${username} \n
           Password: ${password}`);
   }; // handleSubmit
+
+  // update parent state from child component
+  update(state) {
+    this.setState({ state });
+  }
 
   render() {
     // if the currentStep is 0, render zipcode form
@@ -362,7 +442,14 @@ class MasterForm extends React.Component {
           currentStep={this.state.currentStep}
           handleChange={this.handleChange}
           zipcode={this.state.zipcode}
+          carpet={this.state.carpet}
+          areaRug={this.state.areaRug}
+          upholstery={this.state.upholstery}
+          airDuct={this.state.airDuct}
+          tileGrout={this.state.tileGrout}
           recall={this.recall}
+          update={this.update}
+          handleChangeCheck={this.handleChangeCheck}
           newZip={this.newZip}
         />
         <form onSubmit={this.handleSubmit}>
@@ -390,63 +477,10 @@ ReactDOM.render(<MasterForm />, document.getElementById("root"));
 
 // =================================================================== //
 // ===================== Service Section ============================= //
+
 class Service extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      carpet: {
-        title: "CARPET CLEANING",
-        rooms: {
-          clean: 0,
-          protect: 0,
-          deodorize: 0,
-        }, // rooms
-        bath: this.carpetOptions, // bath
-        hall: this.carpetOptions, // hall
-        staircase: this.carpetOptions, // staircase
-        display: false, // boolean to display options
-        toggleIcon: this.downArrow, // toggle icon
-      },
-
-      areaRug: {
-        title: "AREA RUG CLEANING",
-        length: 0,
-        width: 0,
-        clean: 0,
-        protect: 0,
-        deodorize: 0,
-        display: false, // boolean to display options
-        toggleIcon: this.downArrow, // toggle icon
-      },
-
-      upholstery: {
-        title: "UPHOLSTERY CLEANING",
-        sofa: this.carpetOptions, // rooms
-        loveseat: this.carpetOptions, // bath
-        chair: this.carpetOptions, // hall
-        ottoman: this.carpetOptions, // staircase
-        diningChair: this.carpetOptions, // staircase
-        display: false, // boolean to display options
-        toggleIcon: this.downArrow, // toggle icon
-      }, // upholstery
-
-      airDuct: {
-        title: "AIR DUCT CLEANING",
-        hvac: 0,
-        centralAC: false,
-        cleanDryerVent: false,
-        display: false, // boolean to display options
-        toggleIcon: this.downArrow, // toggle icon
-      }, // upholstery
-
-      tileGrout: {
-        title: "TILE & GROUT FLOOR CLEANING",
-        rooms: this.tileGroutOptions,
-        staircase: this.tileGroutOptions,
-        display: false, // boolean to display options
-        toggleIcon: this.downArrow, // toggle icon
-      }, // tile & grout floor
-    };
 
     // service templates
     this._carpet = this._carpet.bind(this);
@@ -461,18 +495,16 @@ class Service extends React.Component {
     this._toggleIcon = this._toggleIcon.bind(this);
     this._tileGrout = this._tileGrout.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+    this._operatorChange = this._operatorChange.bind(this);
   } // constructor
 
-  carpetOptions = {
-    clean: 0,
-    protect: 0,
-    deodorize: 0,
-  };
-
-  tileGroutOptions = {
-    tileClean: 0,
-    colorSeal: 0,
-  };
+  /*
+  setState(state) {
+    window.localStorage.setItem("state", JSON.stringify(state));
+    super.setState(state);
+  }
+  */
 
   upArrow = "&#x2191;";
   downArrow = "&#x2193;";
@@ -514,8 +546,7 @@ class Service extends React.Component {
   }
 
   _areaRug() {
-    if (this.state.areaRug.display === false) {
-      console.log("null state");
+    if (this.props.areaRug.display === false) {
       return null;
     }
 
@@ -532,11 +563,112 @@ class Service extends React.Component {
         <tbody>
           <tr>
             <td>
-              {this.state.areaRug.length} x {this.state.areaRug.width}
+              <input
+                type="text"
+                className="input-control"
+                id="length"
+                name="length"
+                group="length"
+                placeholder={this.props.areaRug.length}
+                value={this.props.areaRug.length}
+                onChange={(e) => this.handleChange(e, this.props.areaRug)}
+              />{" "}
+              x{" "}
+              <input
+                type="text"
+                className="input-control"
+                id="width"
+                name="width"
+                group="width"
+                placeholder={this.props.areaRug.width}
+                value={this.props.areaRug.width}
+                onChange={(e) => this.handleChange(e, this.props.areaRug)}
+              />
             </td>
-            <td>{this.state.areaRug.clean}</td>
-            <td>{this.state.areaRug.protect}</td>
-            <td>{this.state.areaRug.deodorize}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.areaRug, "clean")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="areaRug-clean"
+                name="areaRug-clean"
+                group="clean"
+                placeholder={this.props.areaRug.clean}
+                value={this.props.areaRug.clean}
+                onChange={(e) => this.handleChange(e, this.props.areaRug)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.areaRug, "clean")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.areaRug, "protect")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="areaRug-protect"
+                name="areaRug-protect"
+                group="protect"
+                placeholder={this.props.areaRug.protect}
+                value={this.props.areaRug.protect}
+                onChange={(e) => this.handleChange(e, this.props.areaRug)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.areaRug, "protect")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.areaRug, "deodorize")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="areaRug-deodorize"
+                name="areaRug-deodorize"
+                group="deodorize"
+                placeholder={this.props.areaRug.deodorize}
+                value={this.props.areaRug.deodorize}
+                onChange={(e) => this.handleChange(e, this.props.areaRug)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.areaRug, "deodorize")
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -544,8 +676,7 @@ class Service extends React.Component {
   }
 
   _carpet() {
-    if (this.state.carpet.display === false) {
-      console.log("null state");
+    if (this.props.carpet.display === false) {
       return null;
     }
 
@@ -564,65 +695,375 @@ class Service extends React.Component {
           <tr>
             <th>Room(s)</th>
             <td>
-              <span className="btn-minus">-</span>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.rooms, "clean")
+                }
+              >
+                -
+              </span>
               <input
                 type="text"
                 className="input-control"
                 id="room-clean"
                 name="room-clean"
-                placeholder={this.state.carpet.rooms.clean}
-                value={this.state.carpet.rooms.clean}
-                onChange={this.handleChange}
+                group="clean"
+                placeholder={this.props.carpet.rooms.clean}
+                value={this.props.carpet.rooms.clean}
+                onChange={(e) => this.handleChange(e, this.props.carpet.rooms)}
               />
-              <span className="btn-plus">+</span>
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.rooms, "clean")
+                }
+              >
+                +
+              </span>
             </td>
             <td>
-              <span className="btn-minus">-</span>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.rooms, "protect")
+                }
+              >
+                -
+              </span>
               <input
                 type="text"
                 className="input-control"
-                id="room-clean"
-                name="room-clean"
-                placeholder={this.state.carpet.rooms.protect}
-                value={this.state.carpet.rooms.protect}
-                onChange={null}
+                id="room-protect"
+                name="room-protect"
+                group="protect"
+                placeholder={this.props.carpet.rooms.protect}
+                value={this.props.carpet.rooms.protect}
+                onChange={(e) => this.handleChange(e, this.props.carpet.rooms)}
               />
-              <span className="btn-plus">+</span>
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.rooms, "protect")
+                }
+              >
+                +
+              </span>
             </td>
             <td>
-              <span className="btn-minus">-</span>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.rooms, "deodorize")
+                }
+              >
+                -
+              </span>
               <input
                 type="text"
                 className="input-control"
-                id="room-clean"
-                name="room-clean"
-                placeholder={this.state.carpet.rooms.deodorize}
-                value={this.state.carpet.rooms.deodorize}
-                onChange={null}
+                id="room-deodorize"
+                name="room-deodorize"
+                group="deodorize"
+                placeholder={this.props.carpet.rooms.deodorize}
+                value={this.props.carpet.rooms.deodorize}
+                onChange={(e) => this.handleChange(e, this.props.carpet.rooms)}
               />
-              <span className="btn-plus">+</span>
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.rooms, "deodorize")
+                }
+              >
+                +
+              </span>
             </td>
           </tr>
 
           <tr>
             <th>Bath/Laundry</th>
-            <td>{this.state.carpet.bath.clean}</td>
-            <td>{this.state.carpet.bath.protect}</td>
-            <td>{this.state.carpet.bath.deodorize}</td>
+            <td id="carpet-bath-clean">
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.bath, "clean")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="bath-clean"
+                name="bath-clean"
+                group="clean"
+                placeholder={this.props.carpet.bath.clean}
+                value={this.props.carpet.bath.clean}
+                onChange={(e) => this.handleChange(e, this.props.carpet.bath)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.bath, "clean")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td id="carpet-bath-protect">
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.bath, "protect")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="bath-protect"
+                name="bath-protect"
+                group="protect"
+                placeholder={this.props.carpet.bath.protect}
+                value={this.props.carpet.bath.protect}
+                onChange={(e) => this.handleChange(e, this.props.carpet.bath)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.bath, "protect")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td id="carpet-bath-deodorize">
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.bath, "deodorize")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="bath-deodorize"
+                name="bath-deodorize"
+                group="deodorize"
+                placeholder={this.props.carpet.bath.deodorize}
+                value={this.props.carpet.bath.deodorize}
+                onChange={(e) => this.handleChange(e, this.props.carpet.bath)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.bath, "deodorize")
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
 
           <tr>
             <th>Entry/Hall</th>
-            <td>{this.state.carpet.hall.clean}</td>
-            <td>{this.state.carpet.hall.protect}</td>
-            <td>{this.state.carpet.hall.deodorize}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.hall, "clean")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="hall-clean"
+                name="hall-clean"
+                group="clean"
+                placeholder={this.props.carpet.hall.clean}
+                value={this.props.carpet.hall.clean}
+                onChange={(e) => this.handleChange(e, this.props.carpet.hall)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.hall, "clean")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.hall, "protect")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="hall-protect"
+                name="hall-protect"
+                group="protect"
+                placeholder={this.props.carpet.hall.protect}
+                value={this.props.carpet.hall.protect}
+                onChange={(e) => this.handleChange(e, this.props.carpet.hall)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.hall, "protect")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.hall, "deodorize")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="hall-deodorize"
+                name="hall-deodorize"
+                group="deodorize"
+                placeholder={this.props.carpet.hall.deodorize}
+                value={this.props.carpet.hall.deodorize}
+                onChange={(e) => this.handleChange(e, this.props.carpet.hall)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.hall, "deodorize")
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
 
           <tr>
             <th>Staircase</th>
-            <td>{this.state.carpet.staircase.clean}</td>
-            <td>{this.state.carpet.staircase.protect}</td>
-            <td>{this.state.carpet.staircase.deodorize}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.carpet.staircase, "clean")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="staircase-clean"
+                name="staircase-clean"
+                group="clean"
+                placeholder={this.props.carpet.staircase.clean}
+                value={this.props.carpet.staircase.clean}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.carpet.staircase)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.carpet.staircase, "clean")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.carpet.staircase,
+                    "protect"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="staircase-protect"
+                name="staircase-protect"
+                group="protect"
+                placeholder={this.props.carpet.staircase.protect}
+                value={this.props.carpet.staircase.protect}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.carpet.staircase)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.carpet.staircase,
+                    "protect"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.carpet.staircase,
+                    "deodorize"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="staircase-deodorize"
+                name="staircase-deodorize"
+                group="deodorize"
+                placeholder={this.props.carpet.staircase.deodorize}
+                value={this.props.carpet.staircase.deodorize}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.carpet.staircase)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.carpet.staircase,
+                    "deodorize"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -630,8 +1071,7 @@ class Service extends React.Component {
   } // carpet
 
   _airDuct() {
-    if (this.state.airDuct.display === false) {
-      console.log("null state");
+    if (this.props.airDuct.display === false) {
       return null;
     }
 
@@ -640,15 +1080,42 @@ class Service extends React.Component {
         <tbody>
           <tr>
             <th>Indicate # of furnaces / HAVC</th>
-            <td>{this.state.airDuct.hvac}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.airDuct, "hvac")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="hvac"
+                name="hvac"
+                group="hvac"
+                placeholder={this.props.airDuct.hvac}
+                value={this.props.airDuct.hvac}
+                onChange={(e) => this.handleChange(e, this.props.airDuct)}
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.airDuct, "hvac")
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
           <tr>
             <th>Home has central air conditioning</th>
-            <td>{this.state.airDuct.centralAC}</td>
+            <td>{this._getCheckBox(this.props.airDuct, "centralAC")}</td>
           </tr>
           <tr>
             <th>Clean my dryer vent</th>
-            <td>{this.state.airDuct.cleanDryerVent}</td>
+            <td>{this._getCheckBox(this.props.airDuct, "cleanDryerVent")}</td>
           </tr>
         </tbody>
       </table>
@@ -656,8 +1123,7 @@ class Service extends React.Component {
   } // air duct cleaning
 
   _upholstery() {
-    if (this.state.upholstery.display === false) {
-      console.log("null state");
+    if (this.props.upholstery.display === false) {
       return null;
     }
 
@@ -675,37 +1141,568 @@ class Service extends React.Component {
         <tbody>
           <tr>
             <th>Sofa</th>
-            <td>{this.state.upholstery.sofa.clean}</td>
-            <td>{this.state.upholstery.sofa.protect}</td>
-            <td>{this.state.upholstery.sofa.deodorize}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.upholstery.sofa, "clean")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="sofa-clean"
+                name="sofa-clean"
+                group="clean"
+                placeholder={this.props.upholstery.sofa.clean}
+                value={this.props.upholstery.sofa.clean}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.sofa)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.upholstery.sofa, "clean")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.upholstery.sofa, "protect")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="sofa-protect"
+                name="sofa-protect"
+                group="protect"
+                placeholder={this.props.upholstery.sofa.protect}
+                value={this.props.upholstery.sofa.protect}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.sofa)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.upholstery.sofa, "protect")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.sofa,
+                    "deodorize"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="sofa-deodorize"
+                name="sofa-deodorize"
+                group="deodorize"
+                placeholder={this.props.upholstery.sofa.deodorize}
+                value={this.props.upholstery.sofa.deodorize}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.sofa)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.sofa,
+                    "deodorize"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
 
           <tr>
             <th>Loveseat</th>
-            <td>{this.state.upholstery.loveseat.clean}</td>
-            <td>{this.state.upholstery.loveseat.protect}</td>
-            <td>{this.state.upholstery.loveseat.deodorize}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.loveseat,
+                    "clean"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="loveseat-clean"
+                name="loveseat-clean"
+                group="clean"
+                placeholder={this.props.upholstery.loveseat.clean}
+                value={this.props.upholstery.loveseat.clean}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.loveseat)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.loveseat,
+                    "clean"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.loveseat,
+                    "protect"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="loveseat-protect"
+                name="loveseat-protect"
+                group="protect"
+                placeholder={this.props.upholstery.loveseat.protect}
+                value={this.props.upholstery.loveseat.protect}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.loveseat)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.loveseat,
+                    "protect"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.loveseat,
+                    "deodorize"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="loveseat-deodorize"
+                name="loveseat-deodorize"
+                group="deodorize"
+                placeholder={this.props.upholstery.loveseat.deodorize}
+                value={this.props.upholstery.loveseat.deodorize}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.loveseat)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.loveseat,
+                    "deodorize"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
 
           <tr>
             <th>Chair</th>
-            <td>{this.state.upholstery.chair.clean}</td>
-            <td>{this.state.upholstery.chair.protect}</td>
-            <td>{this.state.upholstery.chair.deodorize}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(0, this.props.upholstery.chair, "clean")
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="chair-clean"
+                name="chair-clean"
+                group="clean"
+                placeholder={this.props.upholstery.chair.clean}
+                value={this.props.upholstery.chair.clean}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.chair)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(1, this.props.upholstery.chair, "clean")
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.chair,
+                    "protect"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="chair-protect"
+                name="chair-protect"
+                group="protect"
+                placeholder={this.props.upholstery.chair.protect}
+                value={this.props.upholstery.chair.protect}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.chair)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.chair,
+                    "protect"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.chair,
+                    "deodorize"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="chair-deodorize"
+                name="chair-deodorize"
+                group="deodorize"
+                placeholder={this.props.upholstery.chair.deodorize}
+                value={this.props.upholstery.chair.deodorize}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.chair)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.chair,
+                    "deodorize"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
 
           <tr>
             <th>Ottoman</th>
-            <td>{this.state.upholstery.ottoman.clean}</td>
-            <td>{this.state.upholstery.ottoman.protect}</td>
-            <td>{this.state.upholstery.ottoman.deodorize}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.ottoman,
+                    "clean"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="ottoman-clean"
+                name="ottoman-clean"
+                group="clean"
+                placeholder={this.props.upholstery.ottoman.clean}
+                value={this.props.upholstery.ottoman.clean}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.ottoman)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.ottoman,
+                    "clean"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.ottoman,
+                    "protect"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="ottoman-protect"
+                name="ottoman-protect"
+                group="protect"
+                placeholder={this.props.upholstery.ottoman.protect}
+                value={this.props.upholstery.ottoman.protect}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.ottoman)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.ottoman,
+                    "protect"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.ottoman,
+                    "deodorize"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="ottoman-deodorize"
+                name="ottoman-deodorize"
+                group="deodorize"
+                placeholder={this.props.upholstery.ottoman.deodorize}
+                value={this.props.upholstery.ottoman.deodorize}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.ottoman)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.ottoman,
+                    "deodorize"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
 
           <tr>
             <th>Dining Room Chair</th>
-            <td>{this.state.upholstery.diningChair.clean}</td>
-            <td>{this.state.upholstery.diningChair.protect}</td>
-            <td>{this.state.upholstery.diningChair.deodorize}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.diningChair,
+                    "clean"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="diningChair-clean"
+                name="diningChair-clean"
+                group="clean"
+                placeholder={this.props.upholstery.diningChair.clean}
+                value={this.props.upholstery.diningChair.clean}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.diningChair)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.diningChair,
+                    "clean"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.diningChair,
+                    "protect"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="diningChair-protect"
+                name="diningChair-protect"
+                group="protect"
+                placeholder={this.props.upholstery.diningChair.protect}
+                value={this.props.upholstery.diningChair.protect}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.diningChair)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.diningChair,
+                    "protect"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.upholstery.diningChair,
+                    "deodorize"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="diningChair-deodorize"
+                name="diningChair-deodorize"
+                group="deodorize"
+                placeholder={this.props.upholstery.diningChair.deodorize}
+                value={this.props.upholstery.diningChair.deodorize}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.upholstery.diningChair)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.upholstery.diningChair,
+                    "deodorize"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -713,8 +1710,7 @@ class Service extends React.Component {
   } // upholstery
 
   _tileGrout() {
-    if (this.state.tileGrout.display === false) {
-      console.log("null state");
+    if (this.props.tileGrout.display === false) {
       return null;
     }
 
@@ -731,35 +1727,209 @@ class Service extends React.Component {
         <tbody>
           <tr>
             <th>Room(s)</th>
-            <td>{this.state.tileGrout.rooms.tileClean}</td>
-            <td>{this.state.tileGrout.rooms.colorSeal}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.tileGrout.rooms,
+                    "tileClean"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="rooms-tileClean"
+                name="rooms-tileClean"
+                group="tileClean"
+                placeholder={this.props.tileGrout.rooms.tileClean}
+                value={this.props.tileGrout.rooms.tileClean}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.tileGrout.rooms)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.tileGrout.rooms,
+                    "tileClean"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.tileGrout.rooms,
+                    "colorSeal"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="rooms-colorSeal"
+                name="rooms-colorSeal"
+                group="colorSeal"
+                placeholder={this.props.tileGrout.rooms.colorSeal}
+                value={this.props.tileGrout.rooms.colorSeal}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.tileGrout.rooms)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.tileGrout.rooms,
+                    "colorSeal"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
 
           <tr>
             <th>Staircase</th>
-            <td>{this.state.tileGrout.staircase.tileClean}</td>
-            <td>{this.state.tileGrout.staircase.colorSeal}</td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.tileGrout.staircase,
+                    "tileClean"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="tileGrout-staircase"
+                name="tileGrout-staircase"
+                group="tileClean"
+                placeholder={this.props.tileGrout.staircase.tileClean}
+                value={this.props.tileGrout.staircase.tileClean}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.tileGrout.staircase)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.tileGrout.staircase,
+                    "tileClean"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
+            <td>
+              <span
+                className="btn-minus"
+                onClick={() =>
+                  this._operatorChange(
+                    0,
+                    this.props.tileGrout.staircase,
+                    "colorSeal"
+                  )
+                }
+              >
+                -
+              </span>
+              <input
+                type="text"
+                className="input-control"
+                id="tileGrout-colorSeal"
+                name="tileGrout-colorSeal"
+                group="colorSeal"
+                placeholder={this.props.tileGrout.staircase.colorSeal}
+                value={this.props.tileGrout.staircase.colorSeal}
+                onChange={(e) =>
+                  this.handleChange(e, this.props.tileGrout.staircase)
+                }
+              />
+              <span
+                className="btn-plus"
+                onClick={() =>
+                  this._operatorChange(
+                    1,
+                    this.props.tileGrout.staircase,
+                    "colorSeal"
+                  )
+                }
+              >
+                +
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
     );
   } // tile & grout cleaning
 
+  _getCheckBox(state, child) {
+    return (
+      <input
+        type="checkbox"
+        group={child}
+        onChange={(e) => this.props.handleChangeCheck(e, state)}
+        checked={state[child]}
+      />
+    );
+  }
+
   _toggleView(state) {
     let service = state;
     service.toggleIcon =
       state.toggleIcon === this.downArrow ? this.upArrow : this.downArrow;
     service.display = state.display === false ? true : false;
-    this.setState({ service });
+    this.props.update(service);
   } // toggleView
 
-  handleChange(event) {
+  _operatorChange(num, state, group) {
+    if (num == 1) {
+      let value = state[group] + 1;
+      state[group] = value;
+      this.props.update(state);
+      console.log(state);
+    } else {
+      if (state[group] <= 0) {
+        return null;
+      }
+      let value = state[group] - 1;
+      state[group] = value;
+      this.props.update(state);
+      console.log(state);
+    }
+  } // _operatorChange
+
+  handleChange(event, state) {
     const { value } = event.target;
-    var state = this.state.carpet.rooms;
-    state["clean"] = value;
-    this.setState({
-      state,
-    });
+    let group = event.currentTarget.getAttribute("group");
+    state[group] = parseInt(value);
+    this.props.update(state);
   } // handleChange
 
   displayServices() {
@@ -768,7 +1938,7 @@ class Service extends React.Component {
         <article className="service-option">
           <div className="service-head">
             <h3>
-              {this.state.carpet.title} {this._toggleIcon(this.state.carpet)}
+              {this.props.carpet.title} {this._toggleIcon(this.props.carpet)}
             </h3>
           </div>
           {this._carpet()}
@@ -777,7 +1947,7 @@ class Service extends React.Component {
         <article className="service-option">
           <div className="service-head">
             <h3>
-              {this.state.areaRug.title} {this._toggleIcon(this.state.areaRug)}
+              {this.props.areaRug.title} {this._toggleIcon(this.props.areaRug)}
             </h3>
           </div>
           {this._areaRug()}
@@ -786,8 +1956,8 @@ class Service extends React.Component {
         <article className="service-option">
           <div className="service-head">
             <h3>
-              {this.state.upholstery.title}{" "}
-              {this._toggleIcon(this.state.upholstery)}
+              {this.props.upholstery.title}{" "}
+              {this._toggleIcon(this.props.upholstery)}
             </h3>
           </div>
           {this._upholstery()}
@@ -796,7 +1966,7 @@ class Service extends React.Component {
         <article className="service-option">
           <div className="service-head">
             <h3>
-              {this.state.airDuct.title} {this._toggleIcon(this.state.airDuct)}
+              {this.props.airDuct.title} {this._toggleIcon(this.props.airDuct)}
             </h3>
           </div>
           {this._airDuct()}
@@ -805,8 +1975,8 @@ class Service extends React.Component {
         <article className="service-option">
           <div className="service-head">
             <h3>
-              {this.state.tileGrout.title}{" "}
-              {this._toggleIcon(this.state.tileGrout)}
+              {this.props.tileGrout.title}{" "}
+              {this._toggleIcon(this.props.tileGrout)}
             </h3>
           </div>
           {this._tileGrout()}
@@ -829,3 +1999,305 @@ class Service extends React.Component {
     );
   } // render
 } // Service
+
+// ============================================================= //
+// ====================== CalenderApp ========================== //
+
+const style = {
+  positon: "relative",
+  margin: "50px auto",
+};
+
+class CalenderApp extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  onDayClick = (e, day) => {
+    alert(day);
+  };
+
+  render() {
+    return (
+      <React.Fragment>
+        <section className="schedule-service">
+          <h1>APOINTMENT DATE AND ARRIVAL WINDOW</h1>
+          <Calender onDayClick={(e, day) => this.onDayClick(e, day)} />
+        </section>
+      </React.Fragment>
+    );
+  }
+}
+
+// ============================================================= //
+// ================Calender.Component ========================== //
+
+class Calender extends React.Component {
+  constructor(props) {
+    super(props);
+    this.width = props.width || "350px";
+    this.style = props.style || {};
+  }
+
+  state = {
+    dateContext: moment(),
+    today: moment(),
+    showMonthPopup: false,
+    showYearPopup: false,
+  };
+
+  weekdays = moment.weekdays();
+  weekdaysShort = moment.weekdaysShort();
+  months = moment.months();
+
+  year = () => {
+    return this.state.dateContext.format("Y");
+  };
+
+  month = () => {
+    return this.state.dateContext.format("MMMM");
+  };
+
+  daysInMonth = () => {
+    return this.state.dateContext.daysInMonth();
+  };
+
+  currentDate = () => {
+    return this.state.dateContext.get("date");
+  };
+
+  currentDay = () => {
+    return this.state.dateContext.format("D");
+  };
+
+  firstDayOfMOnth = () => {
+    let dateContext = this.state.dateContext;
+    let firstDay = moment(dateContext).startOf("month").format("d");
+    return firstDay;
+  };
+
+  setMonth = (month) => {
+    let monthNo = this.months.indexOf(month);
+    let dateContext = Object.assign({}, this.state.dateContext);
+    dateContext = moment(dateContext).set("month", monthNo);
+    this.setState({
+      dateContext: dateContext,
+    });
+  };
+
+  nextMonth = () => {
+    let dateContext = Object.assign({}, this.state.dateContext);
+    dateContext = moment(dateContext).add(1, "month");
+    this.setState({
+      dateContext: dateContext,
+    });
+    this.props.onNextMonth && this.props.onNextMonth();
+  };
+
+  prevMonth = () => {
+    let dateContext = Object.assign({}, this.state.dateContext);
+    dateContext = moment(dateContext).subtract(1, "month");
+    this.setState({
+      dateContext: dateContext,
+    });
+    this.props.onPrevMonth && this.props.onPrevMonth();
+  };
+
+  onSelectChange = (e, data) => {
+    this.setMonth(data);
+    this.props.onMonthChange && this.props.onMonthChange();
+  };
+
+  SelectList = (props) => {
+    let popup = props.data.map((data) => {
+      return (
+        <div key={data}>
+          <a
+            href="#"
+            onClick={(e) => {
+              this.onSelectChange(e, data);
+            }}
+          >
+            {data}
+          </a>
+        </div>
+      );
+    });
+
+    return <div className="month-popup">{popup}</div>;
+  };
+
+  onChangeMonth = (e, month) => {
+    console.log(month);
+    this.setState({
+      showMonthPopup: !this.state.showMonthPopup,
+    });
+  };
+
+  MonthNav = () => {
+    return (
+      <span
+        className="label-month"
+        onClick={(e) => this.onChangeMonth(e, this.month())}
+      >
+        {this.month()}
+        {this.state.showMonthPopup && <this.SelectList data={this.months} />}
+      </span>
+    );
+  };
+
+  showYearEditor = () => {
+    this.setState({
+      showYearNav: true,
+    });
+  };
+
+  setYear = (year) => {
+    let dateContext = Object.assign({}, this.state.dateContext);
+    dateContext = moment(dateContext).set("year", year);
+    this.setState({
+      dateContext: dateContext,
+    });
+  };
+
+  onYearChange = (e) => {
+    this.setYear(e.target.value);
+    this.props.onYearChange && this.props.onYearChange(e, e.target.value);
+  };
+
+  onKeyUpYear = (e) => {
+    if (e.which === 13 || e.which === 27) {
+      this.setYear(e.target.value);
+      this.setState({
+        showYearNav: false,
+      });
+    }
+  };
+
+  YearNav = () => {
+    return this.state.showYearNav ? (
+      <input
+        default={this.year()}
+        className="editor-year"
+        ref={(yearInput) => {
+          this.yearInput = yearInput;
+        }}
+        onKeyUp={(e) => this.onKeyUpYear(e)}
+        onChange={(e) => this.onYearChange(e)}
+        type="number"
+        placeholder="year"
+      />
+    ) : (
+      <span
+        onDoubleClick={(e) => {
+          this.showYearEditor();
+        }}
+        className="label-year"
+      >
+        {this.year()}
+      </span>
+    );
+  };
+
+  onDayClick = (e, day) => {
+    this.props.onDayClick && this.props.onDayClick(e, day);
+  };
+
+  render() {
+    let weekdays = this.weekdaysShort.map((day) => {
+      return (
+        <td key={day} className="week-day">
+          {day}
+        </td>
+      );
+    });
+
+    let blanks = [];
+    for (let i = 0; i < this.firstDayOfMOnth(); i++) {
+      blanks.push(
+        <td key={i * 80} className="emptySlot">
+          {" "}
+        </td>
+      );
+    }
+
+    let daysInMonth = [];
+    for (let d = 1; d <= this.daysInMonth(); d++) {
+      let className = d === this.currentDay() ? "day current-day" : "day";
+      daysInMonth.push(
+        <td key={d} className={className}>
+          <span
+            onClick={(e) => {
+              this.onDayClick(e, d);
+            }}
+          >
+            {d}
+          </span>
+        </td>
+      );
+    }
+
+    var totalSlots = [...blanks, ...daysInMonth];
+    let rows = [];
+    let cells = [];
+
+    totalSlots.forEach((row, i) => {
+      if (i % 7 != 0) {
+        cells.push(row);
+      } else {
+        let insertRow = cells.slice();
+        rows.push(insertRow);
+        cells = [];
+        cells.push(row);
+      }
+
+      if (i === totalSlots.length - 1) {
+        let insertRow = cells.slice();
+        rows.push(insertRow);
+      }
+    });
+
+    let trElems = rows.map((d, i) => {
+      return <tr key={i * 100}>{d}</tr>;
+    });
+
+    return (
+      <div className="calender-container">
+        <table className="calender">
+          <thead>
+            <tr className="calender-head">
+              <td colSpan="5">
+                <span
+                  className="btn-minus"
+                  onClick={(e) => {
+                    this.prevMonth();
+                  }}
+                >
+                  <i className="fas">&#xf104;</i>
+                </span>
+
+                <this.MonthNav />
+
+                <span
+                  onClick={(e) => {
+                    this.nextMonth();
+                  }}
+                  className="btn-plus"
+                >
+                  <i className="fas">&#xf105;</i>
+                </span>
+              </td>
+              <td colSpan="2" className="nav-year">
+                <this.YearNav />
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>{weekdays}</tr>
+            {trElems}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+}
